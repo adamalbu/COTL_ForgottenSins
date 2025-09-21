@@ -1,8 +1,12 @@
+using System;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using System.IO;
+using Lamb.UI;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace ForgottenSins
 {

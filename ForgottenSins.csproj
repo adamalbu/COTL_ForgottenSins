@@ -28,4 +28,8 @@
         <PackageReference Include="CultOfTheLamb.GameLibs" Version="1.3.2.341-r.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Assets\Resources\" />
+    </ItemGroup>
+
 </Project>
