@@ -1,10 +1,13 @@
 using System;
 using System.IO;
 using System.Linq;
+
 using HarmonyLib;
 using Lamb.UI;
+
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace ForgottenSins.Patches;
 
@@ -60,11 +63,17 @@ public class WorldMapPatch
         }
         
         // Set size and position
-        RectTransform squareTransform = holeArt.GetComponent<RectTransform>();
+        RectTransform holeTransform = holeArt.GetComponent<RectTransform>();
         // Image is 200x121
         float scaleFactor = 1.3f;
-        squareTransform.sizeDelta = new Vector2(200f * scaleFactor, 121f * scaleFactor);
-        squareTransform.anchoredPosition = new Vector2(-1260f, 300f);
+        holeTransform.sizeDelta = new Vector2(200f * scaleFactor, 121f * scaleFactor);
+        holeTransform.anchoredPosition = new Vector2(-1260f, 300f);
+        
+        GameObject holeMarker = new GameObject("Hole_Marker");
+        holeMarker.transform.SetParent(hole.transform, false);
+        // holeMarker.transform.localPosition = new Vector3(-1260f, 380f, 0);
+        RectTransform markerTransform = holeMarker.AddComponent<RectTransform>();
+        markerTransform.anchoredPosition = new Vector2(-1260f, 400f);
         
         // Add parallax to parent
         GameObject parallaxController = __instance.transform.Find("WorldMapMenuContainer").Find("Map Mask")
@@ -75,5 +84,19 @@ public class WorldMapPatch
         WorldMapParallax mapParallax = parallaxController.GetComponent<WorldMapParallax>();
         mapParallax._layers = mapParallax._layers.Concat([parallaxLayer]).ToArray();
         
+        
+        // Create new location
+        Transform locations = __instance.transform.Find("WorldMapMenuContainer").Find("Map Mask")
+            .Find("Map Container").Find("Locations");
+
+        GameObject newLocation = Object.Instantiate(locations.GetChild(0).gameObject, locations, false);
+        newLocation.transform.position = new Vector2(-1260f, 300f);
+        newLocation.GetComponent<WorldMapIcon>()._parallaxPosition = new Vector2(1564f, -700f);
+        WorldMapIcon newLocationIcon = newLocation.GetComponent<WorldMapIcon>();
+        newLocationIcon._localPoint = markerTransform;
+        newLocationIcon._layer = parallaxLayer;
+        
+        // Add location to list
+        __instance._locations = __instance._locations.Concat([newLocationIcon]).ToArray();
     }
 }
